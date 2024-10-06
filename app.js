@@ -53,8 +53,22 @@ const fs = require('fs/promises');
         }
     }
 
-    const addToFile = async (filePath, content) => {
+    let addedContent ;
 
+    const addToFile = async (filePath, content) => {
+        if(addedContent === content) return;
+
+        try {
+            console.log("FilePath:" + filePath)
+            console.log("Content:" + content)
+            const fileHandle = await fs.open(filePath, "a");
+            fileHandle.write(content);
+            addedContent = content;
+            fileHandle.close();
+            console.log("The content was added succesfully.")
+        } catch (error) {
+            console.log('An error occurred while adding content to the file.')
+        }
     }
 
 
@@ -62,8 +76,6 @@ const fs = require('fs/promises');
 
     // This is an event-driven pattern in Node.js, specifically using an event emitter.
     commandFileHandler.on('change', async () => {
-        // the file was changed
-        console.log("The file was Changed")
         //get the size of the file
         const statSize = (await commandFileHandler.stat()).size;
         //allocate our buffer with size of file
@@ -110,7 +122,7 @@ const fs = require('fs/promises');
         if (command.includes(ADD_TO_FILE)) {
             const _idx = command.indexOf(" this content: ");
             const filePath = command.substring(ADD_TO_FILE.length + 1, _idx);
-            const content = command.substring(_idx + 17);
+            const content = command.substring(_idx + 15);
             addToFile(filePath, content);
 
         }
@@ -118,6 +130,7 @@ const fs = require('fs/promises');
 
     //create a watcher
     const watcher = fs.watch('./command.txt');
+
     for await (const event of watcher) {
         if (event.eventType === 'change') {
             // function emit 
