@@ -14,12 +14,20 @@ const fs = require('fs/promises');
         // the location at which we want to start filling our buffer
         const offset = 0;
         //how may bytes we want to read
-        const length = buff.length;
+        const length = buff.byteLength;
         //the position that we wnat to starting reading the file from 
         const position = 0;
         // We always want to read the whole conent ( form begning all the way to the end)
-        const content = await commandFileHandler.read(buff, offset, length, position);
-        console.log(content);
+        await commandFileHandler.read(buff, offset, length, position);
+        // console.log(buff.toString('utf-8'));
+
+        /**
+         * decoder 01 -> meanigful
+         * encode meaningful -> 01
+         */
+        const command = buff.toString('utf-8');
+        
+
     })
 
     //create a watcher
