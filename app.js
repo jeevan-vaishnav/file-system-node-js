@@ -1,6 +1,27 @@
 const fs = require('fs/promises');
 
+
 (async () => {
+
+    const CREATE_FILE = 'create a file'
+
+    const createFile = async (filePath) => {
+
+        try {
+            //we want to check whether the file already exists
+            const existingFileHandle = await fs.open(filePath, 'r');
+            //we already have that file
+            existingFileHandle.close();
+
+            return console.log(`The file ${filePath} already exists`)
+        } catch (error) {
+            // ..we dont have file , now we should create it
+            const newFileHandle = await fs.open(filePath, 'w');
+            console.log(`The file ${newFileHandle} was created successfully`)
+            newFileHandle.close();
+        }
+    }
+
     const commandFileHandler = await fs.open('./command.txt', 'r');
 
     // This is an event-driven pattern in Node.js, specifically using an event emitter.
@@ -26,8 +47,14 @@ const fs = require('fs/promises');
          * encode meaningful -> 01
          */
         const command = buff.toString('utf-8');
-        
 
+        // create a file:
+        // create a file: <path>
+        if (command.includes(CREATE_FILE)) {
+            const filePath = command.substring(CREATE_FILE.length + 1);
+            console.log("File Path: " + filePath)
+            createFile(filePath);
+        }
     })
 
     //create a watcher
@@ -36,7 +63,6 @@ const fs = require('fs/promises');
         if (event.eventType === 'change') {
             // function emit 
             commandFileHandler.emit('change');
-
         }
     }
 })();
