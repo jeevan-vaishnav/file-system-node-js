@@ -1,1 +1,1 @@
-create a file doc.txt
+rename the file new2demo.txt to newdemo.txt
